@@ -1,0 +1,16 @@
+What would you like to do?
+-View all employees
+-View all employees by department
+-View all employees by manager
+-Add employee => What is the employee's first name? /// What is the employee's last name? /// What is the employee's role? /// Who is the employee's manager? 
+-Remove employee
+-Update employee role => Which employee's role do you want to update? /// Which role do you want to assign the selected employee?
+-Update employee manager => Which employee's manager do you want to update? /// Who is the employee's manager?
+-View all roles
+-Add role => What is the name of the role? /// What is the salary of the role? /// Which department does the role belong to? 
+-Remove role
+-View all departments
+-Add department => What is the name of the department? 
+-Remove department
+-View total utilized budget by department
+-Quit 
