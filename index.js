@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const cTable  = require('console.table');
+const cTable = require('console.table');
 
 
 const db = mysql.createConnection({
@@ -15,82 +15,159 @@ let departmentsList = [];
 let managersList = [];
 let rolesList = [];
 let employeesList = [];
+let startChoices = [
+    "View all employees",
+    "View all employees by department",
+    "View all employees by manager",
+    "Add employee",
+    "Remove employee",
+    "Update employee role",
+    "Update employee manager",
+    "View all roles",
+    "Add role",
+    "Remove role",
+    "View all departments",
+    "Add department",
+    "Remove department",
+    "Quit"
+];
 
 
-function showDepartmentsList() {
-    let sql = `SELECT firm_department.department_name AS department_name, firm_department.id AS id
-    FROM firm_department ORDER BY id ASC`;
-    db.query(sql, (err,result) => {
-        if(err){
+function department() {
+    let sql = `SELECT firm_department.department_name FROM firm_department ORDER BY id ASC`;
+    db.query(sql, (err, result) => {
+        if (err) {
             return console.log(err);
         }
-        let currentDepartmentsId = result.map((element) => element.id)
         let currentDepartments = result.map((element) => element.department_name)
         departmentsList.push(currentDepartments);
-        // console.log(departmentsList);
-       for(let i=0; i<currentDepartments.length; i++){
-           console.table(`[${currentDepartmentsId[i]}:${currentDepartments[i]}]`);
-        //    console.table(`{${currentDepartmentsId[i]}:${currentDepartments[i]}}`);
-        }
+        console.log(departmentsList);
     });
 }
 
-function showManagersList() {
-    let sql = `SELECT firm_employee.first_name AS name, firm_employee.last_name AS surname, firm_employee.id AS id
-    FROM firm_employee JOIN firm_role ON firm_employee.role_id=firm_role.id WHERE manager_id IS NULL ORDER BY id ASC `;
-    db.query(sql, (err,result) => {
-        if(err){
+function manager() {
+    let sql = `SELECT firm_employee.id FROM firm_employee WHERE manager_id IS NULL ORDER BY id ASC `;
+    db.query(sql, (err, result) => {
+        if (err) {
             return console.log(err);
         }
-        let currentManagersId = result.map((element) => element.id)
-        let currentManagers = result.map((element) => [element.name,element.surname])
+        let currentManagers = result.map((element) => element.id)
         managersList.push(currentManagers);
-        // console.log(managersList);
-        for(let i=0; i<currentManagers.length; i++){
-            console.table(`[${currentManagersId[i]}:${currentManagers[i]}]`);
-         }
+        console.log(managersList);
     });
 }
 
-function showRolesList() {
-    let sql = `SELECT firm_role.title AS title, firm_role.id AS id  FROM firm_role
-    JOIN firm_department ON firm_role.department_id=firm_department.id ORDER BY id ASC`;
-    db.query(sql, (err,result) => {
-        if(err){
+function role() {
+    let sql = `SELECT firm_role.title FROM firm_role ORDER BY id ASC`;
+    db.query(sql, (err, result) => {
+        if (err) {
             return console.log(err);
         }
-        let currentRolesId = result.map((element) => element.id)
         let currentRoles = result.map((element) => element.title)
         rolesList.push(currentRoles);
-        // console.log(rolesList);
-        for(let i=0; i<currentRoles.length; i++){
-            console.table(`[${currentRolesId[i]}:${currentRoles[i]}]`);
-         }
+        console.log(rolesList);
     });
 }
 
-function showEmployeesList() {
-    let sql = `SELECT firm_employee.first_name AS name, firm_employee.last_name AS surname, firm_employee.id AS id
-    FROM firm_employee JOIN firm_role ON firm_employee.role_id=firm_role.id ORDER BY id ASC`;
-    db.query(sql, (err,result) => {
-        if(err){
+function employee() {
+    let sql = `SELECT firm_employee.id FROM firm_employee ORDER BY id ASC`;
+    db.query(sql, (err, result) => {
+        if (err) {
             return console.log(err);
         }
-        let currentEmployeesId = result.map((element) => element.id)
-        let currentEmployees = result.map((element) => [element.name,element.surname])
-       employeesList.push(currentEmployees);
-        // console.log(employeesList);
-        for(let i=0; i<currentEmployees.length; i++){
-            console.table(`[${currentEmployeesId[i]}:${currentEmployees[i]}]`);
-         }
+        let currentEmployees = result.map((element) => element.id)
+        employeesList.push(currentEmployees);
+        console.log(employeesList);
     });
 }
 
-function init(){
-    showDepartmentsList();
-    showManagersList();
-    showRolesList();
-    showEmployeesList();
+
+const startQuestion = [
+    {
+        type: "list",
+        name: "start",
+        message: "What would you like to do?", 
+        choices: startChoices
+    }
+];
+
+const addingEmployeeQuestions = [
+    {
+        type: "input",
+        name: "addingEmployeeName",
+        message: "What is the employee's name?" 
+    }
+    ,
+    {
+        type: "input",
+        name: "addingEmployeeSurname",
+        message: "What is the employee's surname?" 
+    }
+    ,
+    {
+        type: "list",
+        name: "addingEmployeeRole",
+        message: "What is this employee's role?",
+        choices: rolesList
+    }
+    ,
+    {
+        type: "list",
+        name: "addingEmployeeManager",
+        message: "Who is the employee's manager? Select manager's ID!",
+        choices: managersList
+    }
+];
+
+const deletingEmployeeQuestions = [
+    {
+        type: "list",
+        name: "deletingEmployee",
+        message: "What is the employee's ID would you like to delete? Select employee's ID!",
+        choices: employeesList
+    }
+];
+
+const updatingEmployeeRoleQuestions = [
+    {
+        type: "list",
+        name: "updatingEmployeeID",
+        message: " Which employee's role do you want to update? Select employee's ID!",
+        choices: employeesList
+    }
+    ,
+    {
+        type: "list",
+        name: "updatingEmployeeRole",
+        message: "Which role do you want to assign the selected employee?",
+        choices: rolesList
+    }
+];
+
+const updatingEmployeeManagerQuestions = [
+    {
+        type: "list",
+        name: "updatingEmployeeID",
+        message: "Which employee's manager do you want to update? Select employee's ID!",
+        choices: employeesList
+    }
+    ,
+    {
+        type: "list",
+        name: "updatingEmployeeManagerID",
+        message: "Who is the employee's manager? Select manager's ID",
+        choices: managersList
+    }
+];
+
+
+
+
+function init() {
+    department();
+    manager();
+    role();
+    employee();
 }
 
 init();
