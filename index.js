@@ -119,11 +119,11 @@ const addingEmployeeQuestions = [
     }
 ];
 
-const deletingEmployeeQuestions = [
+const removingEmployeeQuestion = [
     {
         type: "list",
-        name: "deletingEmployee",
-        message: "What is the employee's ID would you like to delete? Select employee's ID!",
+        name: "removingEmployee",
+        message: "Which employee would you like to remove? Select employee's ID!",
         choices: employeesList
     }
 ];
@@ -160,7 +160,52 @@ const updatingEmployeeManagerQuestions = [
     }
 ];
 
+const addingRoleQuestions = [
+    {
+        type: "input",
+        name: "addingRoleName",
+        message: "What is the name of the role?"
+    }
+    ,
+    {
+        type: "number", 
+        name: "addingRoleSalary",
+        message: "What is the salary of the role?" 
+    }
+    ,
+    {
+        type: "list",
+        name: "addingRoleDepartment",
+        message: "Which department does the role belong to?",
+        choices: departmentsList
+    }
+];
 
+const removingRoleQuestion = [
+    {
+        type: "list",
+        name: "removingRole",
+        message: "Which role would you like to remove?",
+        choices: rolesList
+    }
+];
+
+const addingDepartmentQuestion = [
+    {
+        type: "input",
+        name: "addingDepartment",
+        message: "What is the name of the department?"
+    }
+];
+
+const removingDepartmentQuestion = [
+    {
+        type: "list",
+        name: "removingDepartment",
+        message: "Which department would you like to remove?",
+        choices: departmentsList
+    }
+];
 
 
 function init() {
