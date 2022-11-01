@@ -23,9 +23,20 @@ VALUES
 
 INSERT INTO firm_employee (first_name, last_name, role_id, manager_id)
 VALUES
-  
+    ("Miguel", "Crespo", 2, null),
+    ("Miha", "Zajc", 1, 1),
+    ("Willian", "Arao", 1, 1),
+    ("Enner", "Valencia", 4, null),
+    ("Michy", "Batshuayi", 3, 4),
+    ("Joao", "Pedro", 6, null),
+    ("Diego", "Rossi", 5, 6),
+    ("Attilla", "Szalai", 8, null),
+    ("Ezgjan", "Alioski", 7, 8),
+    ("Lincoln", "Henrique", 10, null),
+    ("Joshua", "King", 9, 10),
+    ("Gustavo", "Henrique", 9, 10);
 
 
-SELECT * FROM firm_department;
-SELECT * FROM firm_role;
-SELECT * FROM firm_employee;
+-- SELECT * FROM firm_department;
+-- SELECT * FROM firm_role;
+-- SELECT * FROM firm_employee;
