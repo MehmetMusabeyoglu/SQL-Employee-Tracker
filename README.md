@@ -14,11 +14,11 @@
 
 ## Description
 
-
+This application is command-line application to manage a company's employee database, using Node.js, Inquirer, and MySQL. This system has add, view, update, and delete options for employees, roles, and departments. When user start to application, it asks questions and executes spesific action based on the user's answer. It uses MySQL for the database and push reponse to database directly. 
 
 ## Usage Demonstration Link
 
-Usage demonstration link is [here]()
+Usage demonstration link is [here](https://drive.google.com/file/d/1XPoCjVZQBycUhOGPAMbAMXoeyN9xNfdI/view)
 
 
 ## User Story
@@ -114,6 +114,7 @@ async function viewEmployees() {
 ## Technologies Used
 
 - JavaScript
+- Node.js
 - Npm inquirer
 - Npm mysql2 
 - Npm console.table 
