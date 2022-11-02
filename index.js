@@ -208,7 +208,7 @@ const removingDepartmentQuestion = [
 ];
 
 
-function viewAllEmployees() {
+function viewEmployees() {
     let sql = `SELECT firm_employee.first_name, firm_employee.last_name, firm_role.title, firm_role.salary, firm_department.department_name, firm_employee.manager_id
     FROM firm_employee 
     INNER JOIN firm_role ON firm_employee.role_id = firm_role.id 
@@ -222,7 +222,7 @@ function viewAllEmployees() {
 }
 
 
-function viewAllEmployeesByDepartment() {
+function viewEmployeesByDepartment() {
     let sql = `SELECT firm_employee.first_name, firm_employee.last_name, firm_role.title, firm_role.salary, firm_department.department_name, firm_employee.manager_id
     FROM firm_employee 
     INNER JOIN firm_role ON firm_employee.role_id = firm_role.id 
@@ -237,7 +237,7 @@ function viewAllEmployeesByDepartment() {
 }
 
 
-function viewAllEmployeesByManager() {
+function viewEmployeesByManager() {
     let sql = `SELECT firm_employee.first_name, firm_employee.last_name, firm_role.title, firm_role.salary, firm_department.department_name, firm_employee.manager_id
     FROM firm_employee 
     INNER JOIN firm_role ON firm_employee.role_id = firm_role.id 
@@ -290,7 +290,7 @@ function removeEmployee() {
         .prompt(removingEmployeeQuestion)
         .then((response) => {
             let removingEmployee = response.removingEmployee;
-            db.query(`DELETE FROM employee_t WHERE employee_t.id = ?;`, [removingEmployee], (err, result) => {
+            db.query(`DELETE FROM firm_employee WHERE firm_employee.id = ?;`, [removingEmployee], (err, result) => {
                 if (err) {
                     return console.log(err);
                 }
@@ -301,6 +301,57 @@ function removeEmployee() {
         });
 
         // Next step
+}
+
+
+function updateEmployeeRole() {
+    inquirer
+        .prompt(updatingEmployeeRoleQuestions)
+        .then((response) => {
+            let updatingEmployeeID = response.updatingEmployeeID;
+            let updatingEmployeeRole = response.updatingEmployeeRole;
+            db.query(`SELECT firm_role.id FROM firm_role WHERE firm_role.title = ?;`, [updatingEmployeeRole], (err, result) => {
+                if (err) {
+                    return console.log(err);
+                }
+                let selectedRole = result[0];
+                selectedRole = selectedRole[0].id;
+                db.query(`UPDATE firm_employee SET role_id = ? WHERE firm_employee.id = ?;`, [selectedRole, updatingEmployeeID], (err,result) => {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    console.log("Employee role updated successfully.");
+                });
+            });
+        });
+}
+
+
+function updateEmployeeManager() {
+    inquirer
+        .prompt(updatingEmployeeManagerQuestions)
+        .then((response) => {
+            let updatingEmployeeID = response.updatingEmployeeID;
+            let updatingEmployeeManagerID = response.updatingEmployeeManagerID;
+            db.promise().query(`UPDATE firm_employee SET manager_id = ? WHERE firm_employee.id = ?`, [updatingEmployeeManagerID, updatingEmployeeID], (err,result) => {
+                if (err) {
+                    return console.log(err);
+                }
+                console.log("Employee manager updated successfully.");
+                manager();
+            });
+        });
+}
+
+
+function viewRoles() {
+    let sql = `SELECT * FROM firm_role`;
+    db.query(sql, (err, result) => {
+        if (err) {
+            return console.log(err);
+        }
+        console.table(result);
+    });
 }
 
 
