@@ -296,11 +296,11 @@ function removeEmployee() {
                 }
                 managersList = managersList.filter(element => element !== removingEmployee);
                 employeesList = employeesList.filter(element => element !== removingEmployee);
-                console.log("Employee deleted successfully.");
+                console.log("Employee removed successfully.");
             });
         });
 
-        // Next step
+    // Next step
 }
 
 
@@ -316,7 +316,7 @@ function updateEmployeeRole() {
                 }
                 let selectedRole = result[0];
                 selectedRole = selectedRole[0].id;
-                db.query(`UPDATE firm_employee SET role_id = ? WHERE firm_employee.id = ?;`, [selectedRole, updatingEmployeeID], (err,result) => {
+                db.query(`UPDATE firm_employee SET role_id = ? WHERE firm_employee.id = ?;`, [selectedRole, updatingEmployeeID], (err, result) => {
                     if (err) {
                         return console.log(err);
                     }
@@ -333,7 +333,7 @@ function updateEmployeeManager() {
         .then((response) => {
             let updatingEmployeeID = response.updatingEmployeeID;
             let updatingEmployeeManagerID = response.updatingEmployeeManagerID;
-            db.promise().query(`UPDATE firm_employee SET manager_id = ? WHERE firm_employee.id = ?`, [updatingEmployeeManagerID, updatingEmployeeID], (err,result) => {
+            db.query(`UPDATE firm_employee SET manager_id = ? WHERE firm_employee.id = ?`, [updatingEmployeeManagerID, updatingEmployeeID], (err, result) => {
                 if (err) {
                     return console.log(err);
                 }
@@ -355,6 +355,56 @@ function viewRoles() {
 }
 
 
+function addRole() {
+    inquirer
+        .prompt(addingRoleQuestions)
+        .then((response) => {
+            let addingRoleName = response.addingRoleName;
+            let addingRoleSalary = response.addingRoleSalary;
+            let addingRoleDepartment = response.addingRoleDepartment;
+            db.query(`SELECT firm_department.id FROM firm_department WHERE firm_department.department_name = ?;`, `${addingRoleDepartment}`, (err, result) => {
+                if (err) {
+                    return console.log(err);
+                }
+                let selectedDepartment = result[0];
+                selectedDepartment = selectedDepartment[0].id;
+                db.query(`INSERT INTO firm_role(title, salary, department_id) VALUES (?, ?, ?);`, [addingRoleName, addingRoleSalary, selectedDepartment], (err, result) => {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    rolesList.push(addingRoleName);
+                    console.log("Role added successfully.");
+                });
+            });
+            // Next step
+        });
+}
+
+
+function removeRole() {
+    inquirer
+        .prompt(removingRoleQuestion)
+        .then((response) => {
+            let removingRole = response.removingRole;
+            db.query(`SELECT firm_role.id FROM firm_role WHERE firm_role.title = ?;`, [removingRole], (err, result) => {
+                if (err) {
+                    return console.log(err);
+                }
+                let currentRole = result[0];
+                currentRole = currentRole[0].id;
+                db.query(`DELETE FROM firm_role WHERE firm_role.id = ?;`, [currentRole], (err, result) => {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    rolesList = rolesList.filter(element => element !== removingRole);
+                    console.log("Role removed successfully.");
+                });
+            });
+            // Next step
+        });
+}
+
+
 function viewDepartments() {
     let sql = `Select * from firm_department`;
     db.query(sql, (err, result) => {
@@ -365,6 +415,47 @@ function viewDepartments() {
     });
 
     // Next step?
+}
+
+
+function addDepartment() {
+    inquirer
+        .prompt(addingDepartmentQuestion)
+        .then((response) => {
+            let addingDepartment = response.addingDepartment;
+            db.query(`INSERT INTO firm_department(department_name) VALUES (?);`, [addingDepartment], (err, result) => {
+                if (err) {
+                    return console.log(err);
+                }
+                departmentsList.push(addingDepartment);
+                console.log("Department added successfully.");
+            });
+            // Next step
+        });
+}
+
+
+function removeDepartment() {
+    inquirer
+        .prompt(removingDepartmentQuestion)
+        .then((response) => {
+            let removingDepartment = response.removingDepartment;
+            db.query(`SELECT firm_department.id FROM firm_department WHERE firm_department.department_name = ?;`, [removingDepartment], (err, result) => {
+                if (err) {
+                    return console.log(err);
+                }
+                let currentDepartment = result[0];
+                currentDepartment = currentDepartment[0].id;
+                db.query(`DELETE FROM firm_department WHERE firm_department.id = ?;`, [currentDepartment], (err, result) => {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    departmentsList  = departmentsList.filter(element => element !== removingDepartment);
+                    console.log("Department removed successfully.");
+                });
+            });
+            // Next step
+        });
 }
 
 
