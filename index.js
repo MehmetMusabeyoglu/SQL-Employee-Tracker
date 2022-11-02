@@ -15,7 +15,7 @@ let departmentsList = [];
 let managersList = [];
 let rolesList = [];
 let employeesList = [];
-let startChoices = [
+let userChoices = [
     "View all employees",
     "View all employees by department",
     "View all employees by manager",
@@ -82,12 +82,12 @@ function employee() {
 }
 
 
-const startQuestion = [
+const userQuestion = [
     {
         type: "list",
-        name: "start",
+        name: "userChoice",
         message: "What would you like to do?",
-        choices: startChoices
+        choices: userChoices
     }
 ];
 
@@ -450,7 +450,7 @@ function removeDepartment() {
                     if (err) {
                         return console.log(err);
                     }
-                    departmentsList  = departmentsList.filter(element => element !== removingDepartment);
+                    departmentsList = departmentsList.filter(element => element !== removingDepartment);
                     console.log("Department removed successfully.");
                 });
             });
@@ -459,11 +459,114 @@ function removeDepartment() {
 }
 
 
+// Inquirer function for promting questions
+async function inquirerChain() {
+    let inquirerEnd = false;
+
+    while (!inquirerEnd) {
+        await inquirer
+            .prompt(userQuestion)
+            .then((result) => {
+                // console.log(result);
+                switch (result.userChoice) {
+                    case "View all employees":
+                        viewEmployees();
+                        break;
+                    case "View all employees by department":
+                        viewEmployeesByDepartment();
+                        break;
+                    case "View all employees by manager":
+                        viewEmployeesByManager();
+                        break;
+                    case "Add employee":
+                        addEmployee();
+                        break;
+                    case "Remove employee":
+                        removeEmployee();
+                        break;
+                    case "Update employee role":
+                        updateEmployeeRole();
+                        break;
+                    case "Update employee manager":
+                        updateEmployeeManager();
+                        break;
+                    case "View all roles":
+                        viewRoles();
+                        break;
+                    case "Add role":
+                        addRole();
+                        break;
+                    case "Remove role":
+                        removeRole();
+                        break;
+                    case "View all departments":
+                        viewDepartments();
+                        break;
+                    case "Add department":
+                        addDepartment();
+                        break;
+                    case "Remove department":
+                        removeDepartment();
+                        break;
+                    case "Quit":
+                        inquirerEnd = true;
+                        console.log("Quitting the application!");
+                        break;
+                    default:
+                        console.log("There is an unexpected problem in the system, please check later!");
+                        break;
+                }
+            });
+    }
+
+
+    // let inquirerEnd = false;
+    // let chosenEmployeeType;
+
+    // while (!inquirerEnd) {
+    //     await inquirer
+    //         .prompt(nextEmployeeQuestion)
+    //         .then((userInputs) => {
+    //             // console.log(userInputs);
+    //             chosenEmployeeType = userInputs.employeeType;
+    //         });
+
+
+    //     if (chosenEmployeeType === "Engineer") {
+    //         await inquirer
+    //             .prompt(engineerQuestions)
+    //             .then((userInputs) => {
+    //                 // console.log(userInputs);
+    //                 ourTeam.push(new Engineer(userInputs.engineerName, userInputs.engineerId, userInputs.engineerEmail, userInputs.engineerGithub, "Engineer"));
+    //                 // console.log(ourTeam);
+    //             });
+    //     }
+    //     else if (chosenEmployeeType === "Intern") {
+    //         await inquirer
+    //             .prompt(internQuestions)
+    //             .then((userInputs) => {
+    //                 // console.log(userInputs);
+    //                 ourTeam.push(new Intern(userInputs.internName, userInputs.internId, userInputs.internEmail, userInputs.internSchool, "Intern"));
+    //                 // console.log(ourTeam);
+    //             });
+    //     }
+    //     else {
+    //         inquirerEnd = true;
+    //         console.log(ourTeam);
+    //     }
+
+    // }
+
+}
+
+
+
 function init() {
     department();
     manager();
     role();
     employee();
+    inquirerChain();
 }
 
 init();
