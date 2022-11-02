@@ -276,9 +276,8 @@ async function addEmployee() {
                 if (err) {
                     return console.log(err);
                 }
-                let selectedRole = result;
-                selectedRole = selectedRole.id;
-
+                let selectedRole = result[0]
+                selectedRole = selectedRole[0].id;
                 db.query(`INSERT INTO firm_employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);`, [addingEmployeeName, addingEmployeeSurname, selectedRole, addingEmployeeManager], (err, result) => {
                     if (err) {
                         return console.log(err);
@@ -292,7 +291,7 @@ async function addEmployee() {
 
 
 async function removeEmployee() {
-    inquirer
+    await inquirer
         .prompt(removingEmployeeQuestion)
         .then((response) => {
             let removingEmployee = response.removingEmployee;
@@ -303,13 +302,14 @@ async function removeEmployee() {
                 managersList = managersList.filter(element => element !== removingEmployee);
                 employeesList = employeesList.filter(element => element !== removingEmployee);
                 console.log("Employee removed successfully.");
+                employee();
             });
         });
 }
 
 
 async function updateEmployeeRole() {
-    inquirer
+    await inquirer
         .prompt(updatingEmployeeRoleQuestions)
         .then((response) => {
             let updatingEmployeeID = response.updatingEmployeeID;
@@ -318,13 +318,14 @@ async function updateEmployeeRole() {
                 if (err) {
                     return console.log(err);
                 }
-                let selectedRole = result;
-                selectedRole = selectedRole.id;
+                let selectedRole = result[0];
+                selectedRole = selectedRole[0].id;
                 db.query(`UPDATE firm_employee SET role_id = ? WHERE firm_employee.id = ?;`, [selectedRole, updatingEmployeeID], (err, result) => {
                     if (err) {
                         return console.log(err);
                     }
                     console.log("Employee role updated successfully.");
+                    employee();
                 });
             });
         });
@@ -332,7 +333,7 @@ async function updateEmployeeRole() {
 
 
 async function updateEmployeeManager() {
-    inquirer
+   await inquirer
         .prompt(updatingEmployeeManagerQuestions)
         .then((response) => {
             let updatingEmployeeID = response.updatingEmployeeID;
@@ -360,7 +361,7 @@ async function viewRoles() {
 
 
 async function addRole() {
-    inquirer
+    await inquirer
         .prompt(addingRoleQuestions)
         .then((response) => {
             let addingRoleName = response.addingRoleName;
@@ -370,14 +371,15 @@ async function addRole() {
                 if (err) {
                     return console.log(err);
                 }
-                let selectedDepartment = result;
-                selectedDepartment = selectedDepartment.id;
+                let selectedDepartment = result[0];
+                selectedDepartment = selectedDepartment[0].id;
                 db.query(`INSERT INTO firm_role(title, salary, department_id) VALUES (?, ?, ?);`, [addingRoleName, addingRoleSalary, selectedDepartment], (err, result) => {
                     if (err) {
                         return console.log(err);
                     }
                     rolesList.push(addingRoleName);
                     console.log("Role added successfully.");
+                    role();
                 });
             });
         });
@@ -385,7 +387,7 @@ async function addRole() {
 
 
 async function removeRole() {
-    inquirer
+    await inquirer
         .prompt(removingRoleQuestion)
         .then((response) => {
             let removingRole = response.removingRole;
@@ -393,14 +395,15 @@ async function removeRole() {
                 if (err) {
                     return console.log(err);
                 }
-                let currentRole = result;
-                currentRole = currentRole.id;
+                let currentRole = result[0];
+                currentRole = currentRole[0].id;
                 db.query(`DELETE FROM firm_role WHERE firm_role.id = ?;`, [currentRole], (err, result) => {
                     if (err) {
                         return console.log(err);
                     }
                     rolesList = rolesList.filter(element => element !== removingRole);
                     console.log("Role removed successfully.");
+                    role();
                 });
             });
         });
@@ -419,7 +422,7 @@ async function viewDepartments() {
 
 
 async function addDepartment() {
-    inquirer
+    await inquirer
         .prompt(addingDepartmentQuestion)
         .then((response) => {
             let addingDepartment = response.addingDepartment;
@@ -429,13 +432,14 @@ async function addDepartment() {
                 }
                 departmentsList.push(addingDepartment);
                 console.log("Department added successfully.");
+                department();
             });
         });
 }
 
 
 async function removeDepartment() {
-    inquirer
+    await inquirer
         .prompt(removingDepartmentQuestion)
         .then((response) => {
             let removingDepartment = response.removingDepartment;
@@ -443,14 +447,15 @@ async function removeDepartment() {
                 if (err) {
                     return console.log(err);
                 }
-                let currentDepartment = result;
-                currentDepartment = currentDepartment.id;
+                let currentDepartment = result[0];
+                currentDepartment = currentDepartment[0].id;
                 db.query(`DELETE FROM firm_department WHERE firm_department.id = ?;`, [currentDepartment], (err, result) => {
                     if (err) {
                         return console.log(err);
                     }
                     departmentsList = departmentsList.filter(element => element !== removingDepartment);
                     console.log("Department removed successfully.");
+                    department();
                 });
             });
         });
