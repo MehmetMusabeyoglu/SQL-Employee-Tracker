@@ -86,7 +86,7 @@ const startQuestion = [
     {
         type: "list",
         name: "start",
-        message: "What would you like to do?", 
+        message: "What would you like to do?",
         choices: startChoices
     }
 ];
@@ -95,13 +95,13 @@ const addingEmployeeQuestions = [
     {
         type: "input",
         name: "addingEmployeeName",
-        message: "What is the employee's name?" 
+        message: "What is the employee's name?"
     }
     ,
     {
         type: "input",
         name: "addingEmployeeSurname",
-        message: "What is the employee's surname?" 
+        message: "What is the employee's surname?"
     }
     ,
     {
@@ -168,9 +168,9 @@ const addingRoleQuestions = [
     }
     ,
     {
-        type: "number", 
+        type: "number",
         name: "addingRoleSalary",
-        message: "What is the salary of the role?" 
+        message: "What is the salary of the role?"
     }
     ,
     {
@@ -206,6 +206,115 @@ const removingDepartmentQuestion = [
         choices: departmentsList
     }
 ];
+
+
+function viewAllEmployees() {
+    let sql = `SELECT firm_employee.first_name, firm_employee.last_name, firm_role.title, firm_role.salary, firm_department.department_name, firm_employee.manager_id
+    FROM firm_employee 
+    INNER JOIN firm_role ON firm_employee.role_id = firm_role.id 
+    INNER JOIN firm_department ON firm_role.department_id = firm_department.id`;
+    db.query(sql, (err, result) => {
+        if (err) {
+            return console.log(err);
+        }
+        console.table(result);
+    });
+}
+
+
+function viewAllEmployeesByDepartment() {
+    let sql = `SELECT firm_employee.first_name, firm_employee.last_name, firm_role.title, firm_role.salary, firm_department.department_name, firm_employee.manager_id
+    FROM firm_employee 
+    INNER JOIN firm_role ON firm_employee.role_id = firm_role.id 
+    INNER JOIN firm_department ON firm_role.department_id = firm_department.id
+    GROUP BY firm_department.department_name`;
+    db.query(sql, (err, result) => {
+        if (err) {
+            return console.log(err);
+        }
+        console.table(result);
+    });
+}
+
+
+function viewAllEmployeesByManager() {
+    let sql = `SELECT firm_employee.first_name, firm_employee.last_name, firm_role.title, firm_role.salary, firm_department.department_name, firm_employee.manager_id
+    FROM firm_employee 
+    INNER JOIN firm_role ON firm_employee.role_id = firm_role.id 
+    INNER JOIN firm_department ON firm_role.department_id = firm_department.id
+    WHERE firm_employee.manager_id IS NOT NULL`;
+    db.query(sql, (err, result) => {
+        if (err) {
+            return console.log(err);
+        }
+        console.table(result);
+    });
+}
+
+
+function addEmployee() {
+    inquirer
+        .prompt(addingEmployeeQuestions)
+        .then((response) => {
+            let addingEmployeeName = response.addingEmployeeName;
+            let addingEmployeeSurname = response.addingEmployeeSurname;
+            let addingEmployeeRole = response.employeeRole;
+            let addingEmployeeManager = response.addingEmployeeManager;
+            if (!addingEmployeeManager) {
+                addingEmployeeManager = null;
+            }
+            db.query(`SELECT firm_role.id FROM firm_role WHERE firm_role.title = ?;`, `${addingEmployeeRole}`, (err, result) => {
+                if (err) {
+                    return console.log(err);
+                }
+                let selectedRole = result[0];
+                selectedRole = selectedRole[0].id;
+
+                db.query(`INSERT INTO firm_employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);`, [addingEmployeeName, addingEmployeeSurname, selectedRole, addingEmployeeManager], (err, result) => {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    console.log("Employee added successfully.");
+                    employee();
+                });
+            });
+
+        });
+
+    // Next step
+}
+
+
+function removeEmployee() {
+    inquirer
+        .prompt(removingEmployeeQuestion)
+        .then((response) => {
+            let removingEmployee = response.removingEmployee;
+            db.query(`DELETE FROM employee_t WHERE employee_t.id = ?;`, [removingEmployee], (err, result) => {
+                if (err) {
+                    return console.log(err);
+                }
+                managersList = managersList.filter(element => element !== removingEmployee);
+                employeesList = employeesList.filter(element => element !== removingEmployee);
+                console.log("Employee deleted successfully.");
+            });
+        });
+
+        // Next step
+}
+
+
+function viewDepartments() {
+    let sql = `Select * from firm_department`;
+    db.query(sql, (err, result) => {
+        if (err) {
+            return console.log(err);
+        }
+        console.table(result);
+    });
+
+    // Next step?
+}
 
 
 function init() {
