@@ -39,11 +39,11 @@ function employee() {
         if (err) {
             return console.log(err);
         }
-        let employees = result[0];
+        let employees = result;
         for (i = 0; i < employees.length; i++) {
             let currentEmployees = employees[i].id;
             employeesList.push(currentEmployees);
-            console.log(employeesList);
+            // console.log(employeesList);
         }
     });
 }
@@ -54,11 +54,11 @@ function manager() {
         if (err) {
             return console.log(err);
         }
-        let managers = result[0];
+        let managers = result;
         for (i = 0; i < managers.length; i++) {
             let currentManagers = managers[i].id;
             managersList.push(currentManagers);
-            console.log(managersList);
+            // console.log(managersList);
         }
     });
 }
@@ -69,11 +69,11 @@ function role() {
         if (err) {
             return console.log(err);
         }
-        let roles = result[0];
+        let roles = result;
         for (i = 0; i < roles.length; i++) {
             let currentRoles = roles[i].title;
             rolesList.push(currentRoles);
-            console.log(currentRoles);
+            // console.log(currentRoles);
         }
     });
 }
@@ -84,11 +84,11 @@ function department() {
         if (err) {
             return console.log(err);
         }
-        let departments = result[0];
+        let departments = result;
         for (i = 0; i < departments.length; i++) {
             let currentDepartments = departments[i].department_name;
             departmentsList.push(currentDepartments);
-            console.log(departmentsList);
+            // console.log(departmentsList);
         }
     });
 }
@@ -99,7 +99,6 @@ const userQuestion = [
         type: "list",
         name: "userChoice",
         message: "What would you like to do?",
-        // pageSize: 15,
         choices: userChoices
     }
 ];
@@ -273,15 +272,12 @@ async function addEmployee() {
             let addingEmployeeSurname = response.addingEmployeeSurname;
             let addingEmployeeRole = response.employeeRole;
             let addingEmployeeManager = response.addingEmployeeManager;
-            if (!addingEmployeeManager) {
-                addingEmployeeManager = null;
-            }
             db.query(`SELECT firm_role.id FROM firm_role WHERE firm_role.title = ?;`, `${addingEmployeeRole}`, (err, result) => {
                 if (err) {
                     return console.log(err);
                 }
-                let selectedRole = result[0];
-                selectedRole = selectedRole[0].id;
+                let selectedRole = result;
+                selectedRole = selectedRole.id;
 
                 db.query(`INSERT INTO firm_employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);`, [addingEmployeeName, addingEmployeeSurname, selectedRole, addingEmployeeManager], (err, result) => {
                     if (err) {
@@ -291,7 +287,6 @@ async function addEmployee() {
                     employee();
                 });
             });
-
         });
 }
 
@@ -323,8 +318,8 @@ async function updateEmployeeRole() {
                 if (err) {
                     return console.log(err);
                 }
-                let selectedRole = result[0];
-                selectedRole = selectedRole[0].id;
+                let selectedRole = result;
+                selectedRole = selectedRole.id;
                 db.query(`UPDATE firm_employee SET role_id = ? WHERE firm_employee.id = ?;`, [selectedRole, updatingEmployeeID], (err, result) => {
                     if (err) {
                         return console.log(err);
@@ -375,8 +370,8 @@ async function addRole() {
                 if (err) {
                     return console.log(err);
                 }
-                let selectedDepartment = result[0];
-                selectedDepartment = selectedDepartment[0].id;
+                let selectedDepartment = result;
+                selectedDepartment = selectedDepartment.id;
                 db.query(`INSERT INTO firm_role(title, salary, department_id) VALUES (?, ?, ?);`, [addingRoleName, addingRoleSalary, selectedDepartment], (err, result) => {
                     if (err) {
                         return console.log(err);
@@ -398,8 +393,8 @@ async function removeRole() {
                 if (err) {
                     return console.log(err);
                 }
-                let currentRole = result[0];
-                currentRole = currentRole[0].id;
+                let currentRole = result;
+                currentRole = currentRole.id;
                 db.query(`DELETE FROM firm_role WHERE firm_role.id = ?;`, [currentRole], (err, result) => {
                     if (err) {
                         return console.log(err);
@@ -448,8 +443,8 @@ async function removeDepartment() {
                 if (err) {
                     return console.log(err);
                 }
-                let currentDepartment = result[0];
-                currentDepartment = currentDepartment[0].id;
+                let currentDepartment = result;
+                currentDepartment = currentDepartment.id;
                 db.query(`DELETE FROM firm_department WHERE firm_department.id = ?;`, [currentDepartment], (err, result) => {
                     if (err) {
                         return console.log(err);
@@ -473,7 +468,6 @@ async function inquirerChain() {
                 userQuestionChoice = result.userChoice
             });
 
-        // console.log(result);
         switch (userQuestionChoice) {
             case "View all employees":
                 await viewEmployees();
