@@ -33,15 +33,18 @@ let userChoices = [
 ];
 
 
-function department() {
-    let sql = `SELECT firm_department.department_name FROM firm_department ORDER BY id ASC`;
+function employee() {
+    let sql = `SELECT firm_employee.id FROM firm_employee ORDER BY id ASC`;
     db.query(sql, (err, result) => {
         if (err) {
             return console.log(err);
         }
-        let currentDepartments = result.map((element) => element.department_name)
-        departmentsList.push(currentDepartments);
-        console.log(departmentsList);
+        let employees = result[0];
+        for (i = 0; i < employees.length; i++) {
+            let currentEmployees = employees[i].id;
+            employeesList.push(currentEmployees);
+            console.log(employeesList);
+        }
     });
 }
 
@@ -51,9 +54,12 @@ function manager() {
         if (err) {
             return console.log(err);
         }
-        let currentManagers = result.map((element) => element.id)
-        managersList.push(currentManagers);
-        console.log(managersList);
+        let managers = result[0];
+        for (i = 0; i < managers.length; i++) {
+            let currentManagers = managers[i].id;
+            managersList.push(currentManagers);
+            console.log(managersList);
+        }
     });
 }
 
@@ -63,21 +69,27 @@ function role() {
         if (err) {
             return console.log(err);
         }
-        let currentRoles = result.map((element) => element.title)
-        rolesList.push(currentRoles);
-        console.log(rolesList);
+        let roles = result[0];
+        for (i = 0; i < roles.length; i++) {
+            let currentRoles = roles[i].title;
+            rolesList.push(currentRoles);
+            console.log(currentRoles);
+        }
     });
 }
 
-function employee() {
-    let sql = `SELECT firm_employee.id FROM firm_employee ORDER BY id ASC`;
+function department() {
+    let sql = `SELECT firm_department.department_name FROM firm_department ORDER BY id ASC`;
     db.query(sql, (err, result) => {
         if (err) {
             return console.log(err);
         }
-        let currentEmployees = result.map((element) => element.id)
-        employeesList.push(currentEmployees);
-        console.log(employeesList);
+        let departments = result[0];
+        for (i = 0; i < departments.length; i++) {
+            let currentDepartments = departments[i].department_name;
+            departmentsList.push(currentDepartments);
+            console.log(departmentsList);
+        }
     });
 }
 
@@ -87,6 +99,7 @@ const userQuestion = [
         type: "list",
         name: "userChoice",
         message: "What would you like to do?",
+        // pageSize: 15,
         choices: userChoices
     }
 ];
@@ -208,7 +221,7 @@ const removingDepartmentQuestion = [
 ];
 
 
-function viewEmployees() {
+async function viewEmployees() {
     let sql = `SELECT firm_employee.first_name, firm_employee.last_name, firm_role.title, firm_role.salary, firm_department.department_name, firm_employee.manager_id
     FROM firm_employee 
     INNER JOIN firm_role ON firm_employee.role_id = firm_role.id 
@@ -217,12 +230,12 @@ function viewEmployees() {
         if (err) {
             return console.log(err);
         }
-        console.table(result);
+        console.table('',result);
     });
 }
 
 
-function viewEmployeesByDepartment() {
+async function viewEmployeesByDepartment() {
     let sql = `SELECT firm_employee.first_name, firm_employee.last_name, firm_role.title, firm_role.salary, firm_department.department_name, firm_employee.manager_id
     FROM firm_employee 
     INNER JOIN firm_role ON firm_employee.role_id = firm_role.id 
@@ -232,12 +245,12 @@ function viewEmployeesByDepartment() {
         if (err) {
             return console.log(err);
         }
-        console.table(result);
+        console.table('',result);
     });
 }
 
 
-function viewEmployeesByManager() {
+async function viewEmployeesByManager() {
     let sql = `SELECT firm_employee.first_name, firm_employee.last_name, firm_role.title, firm_role.salary, firm_department.department_name, firm_employee.manager_id
     FROM firm_employee 
     INNER JOIN firm_role ON firm_employee.role_id = firm_role.id 
@@ -247,13 +260,13 @@ function viewEmployeesByManager() {
         if (err) {
             return console.log(err);
         }
-        console.table(result);
+        console.table('',result);
     });
 }
 
 
-function addEmployee() {
-    inquirer
+async function addEmployee() {
+    await inquirer
         .prompt(addingEmployeeQuestions)
         .then((response) => {
             let addingEmployeeName = response.addingEmployeeName;
@@ -280,12 +293,10 @@ function addEmployee() {
             });
 
         });
-
-    // Next step
 }
 
 
-function removeEmployee() {
+async function removeEmployee() {
     inquirer
         .prompt(removingEmployeeQuestion)
         .then((response) => {
@@ -299,12 +310,10 @@ function removeEmployee() {
                 console.log("Employee removed successfully.");
             });
         });
-
-    // Next step
 }
 
 
-function updateEmployeeRole() {
+async function updateEmployeeRole() {
     inquirer
         .prompt(updatingEmployeeRoleQuestions)
         .then((response) => {
@@ -327,7 +336,7 @@ function updateEmployeeRole() {
 }
 
 
-function updateEmployeeManager() {
+async function updateEmployeeManager() {
     inquirer
         .prompt(updatingEmployeeManagerQuestions)
         .then((response) => {
@@ -344,18 +353,18 @@ function updateEmployeeManager() {
 }
 
 
-function viewRoles() {
+async function viewRoles() {
     let sql = `SELECT * FROM firm_role`;
     db.query(sql, (err, result) => {
         if (err) {
             return console.log(err);
         }
-        console.table(result);
+        console.table('',result);
     });
 }
 
 
-function addRole() {
+async function addRole() {
     inquirer
         .prompt(addingRoleQuestions)
         .then((response) => {
@@ -376,12 +385,11 @@ function addRole() {
                     console.log("Role added successfully.");
                 });
             });
-            // Next step
         });
 }
 
 
-function removeRole() {
+async function removeRole() {
     inquirer
         .prompt(removingRoleQuestion)
         .then((response) => {
@@ -400,25 +408,22 @@ function removeRole() {
                     console.log("Role removed successfully.");
                 });
             });
-            // Next step
         });
 }
 
 
-function viewDepartments() {
-    let sql = `Select * from firm_department`;
+async function viewDepartments() {
+    let sql = `Select * FROM firm_department`;
     db.query(sql, (err, result) => {
         if (err) {
             return console.log(err);
         }
-        console.table(result);
+        console.table('',result);
     });
-
-    // Next step?
 }
 
 
-function addDepartment() {
+async function addDepartment() {
     inquirer
         .prompt(addingDepartmentQuestion)
         .then((response) => {
@@ -430,12 +435,11 @@ function addDepartment() {
                 departmentsList.push(addingDepartment);
                 console.log("Department added successfully.");
             });
-            // Next step
         });
 }
 
 
-function removeDepartment() {
+async function removeDepartment() {
     inquirer
         .prompt(removingDepartmentQuestion)
         .then((response) => {
@@ -454,111 +458,72 @@ function removeDepartment() {
                     console.log("Department removed successfully.");
                 });
             });
-            // Next step
         });
 }
 
 
-// Inquirer function for promting questions
 async function inquirerChain() {
     let inquirerEnd = false;
+    let userQuestionChoice;
 
     while (!inquirerEnd) {
         await inquirer
             .prompt(userQuestion)
             .then((result) => {
-                // console.log(result);
-                switch (result.userChoice) {
-                    case "View all employees":
-                        viewEmployees();
-                        break;
-                    case "View all employees by department":
-                        viewEmployeesByDepartment();
-                        break;
-                    case "View all employees by manager":
-                        viewEmployeesByManager();
-                        break;
-                    case "Add employee":
-                        addEmployee();
-                        break;
-                    case "Remove employee":
-                        removeEmployee();
-                        break;
-                    case "Update employee role":
-                        updateEmployeeRole();
-                        break;
-                    case "Update employee manager":
-                        updateEmployeeManager();
-                        break;
-                    case "View all roles":
-                        viewRoles();
-                        break;
-                    case "Add role":
-                        addRole();
-                        break;
-                    case "Remove role":
-                        removeRole();
-                        break;
-                    case "View all departments":
-                        viewDepartments();
-                        break;
-                    case "Add department":
-                        addDepartment();
-                        break;
-                    case "Remove department":
-                        removeDepartment();
-                        break;
-                    case "Quit":
-                        inquirerEnd = true;
-                        console.log("Quitting the application!");
-                        break;
-                    default:
-                        console.log("There is an unexpected problem in the system, please check later!");
-                        break;
-                }
+                userQuestionChoice = result.userChoice
             });
+
+        // console.log(result);
+        switch (userQuestionChoice) {
+            case "View all employees":
+                await viewEmployees();
+                break;
+            case "View all employees by department":
+                await viewEmployeesByDepartment();
+                break;
+            case "View all employees by manager":
+                await viewEmployeesByManager();
+                break;
+            case "Add employee":
+                await addEmployee();
+                break;
+            case "Remove employee":
+                await removeEmployee();
+                break;
+            case "Update employee role":
+                await updateEmployeeRole();
+                break;
+            case "Update employee manager":
+                await updateEmployeeManager();
+                break;
+            case "View all roles":
+                await viewRoles();
+                break;
+            case "Add role":
+                await addRole();
+                break;
+            case "Remove role":
+                await removeRole();
+                break;
+            case "View all departments":
+                await viewDepartments();
+                break;
+            case "Add department":
+                await addDepartment();
+                break;
+            case "Remove department":
+                await removeDepartment();
+                break;
+            case "Quit":
+                inquirerEnd = true;
+                console.log("Quitting the application!");
+                break;
+            default:
+                console.log("There is an unexpected problem in the system, please check later!");
+                break;
+        }
     }
-
-
-    // let inquirerEnd = false;
-    // let chosenEmployeeType;
-
-    // while (!inquirerEnd) {
-    //     await inquirer
-    //         .prompt(nextEmployeeQuestion)
-    //         .then((userInputs) => {
-    //             // console.log(userInputs);
-    //             chosenEmployeeType = userInputs.employeeType;
-    //         });
-
-
-    //     if (chosenEmployeeType === "Engineer") {
-    //         await inquirer
-    //             .prompt(engineerQuestions)
-    //             .then((userInputs) => {
-    //                 // console.log(userInputs);
-    //                 ourTeam.push(new Engineer(userInputs.engineerName, userInputs.engineerId, userInputs.engineerEmail, userInputs.engineerGithub, "Engineer"));
-    //                 // console.log(ourTeam);
-    //             });
-    //     }
-    //     else if (chosenEmployeeType === "Intern") {
-    //         await inquirer
-    //             .prompt(internQuestions)
-    //             .then((userInputs) => {
-    //                 // console.log(userInputs);
-    //                 ourTeam.push(new Intern(userInputs.internName, userInputs.internId, userInputs.internEmail, userInputs.internSchool, "Intern"));
-    //                 // console.log(ourTeam);
-    //             });
-    //     }
-    //     else {
-    //         inquirerEnd = true;
-    //         console.log(ourTeam);
-    //     }
-
-    // }
-
 }
-
 
 
 function init() {
